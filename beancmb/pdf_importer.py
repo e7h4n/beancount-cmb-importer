@@ -1,6 +1,6 @@
 '''招行 PDF 导入'''
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from decimal import Decimal, ROUND_HALF_UP
 import re
 import os
@@ -93,6 +93,32 @@ class CmbPdfImporter(importer.ImporterProtocol):
 
     def identify(self, file):
         return is_valid_filename(os.path.basename(file.name))
+
+    def file_account(self, file):
+        return self.account_name
+
+    def file_name(self, file):
+        return 'pdf'
+    
+    def file_date(self, file):
+        max_date = None
+        date_pattern = re.compile(r'\d{4}-\d{2}-\d{2}')
+        date_keyword = "Date"
+
+        with pdfplumber.open(file.name) as pdf:
+            for page in pdf.pages:
+                words = ' '.join([x['text'] for x in page.extract_words()])
+                start_index = words.find(date_keyword)
+                if start_index != -1:
+                    matches = date_pattern.findall(words[start_index:])
+
+                    for match in matches:
+                        current_date = date.fromisoformat(match)
+                        if max_date is None or current_date > max_date:
+                            max_date = current_date
+
+        return max_date
+
 
     def extract(self, file, existing_entries=None):
         # 解析 PDF，提取交易数据并生成 Beancount 实体

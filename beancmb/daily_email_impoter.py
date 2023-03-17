@@ -4,13 +4,14 @@ import base64
 import re
 from email import parser
 from os import path
-from datetime import timedelta
+from datetime import timedelta, datetime, date
 from beancount.core import data
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as dateparse
+from beancmb.util import get_last_balance_date
 
 
 class CmbDailyEmailImporter(importer.ImporterProtocol):
@@ -28,11 +29,28 @@ class CmbDailyEmailImporter(importer.ImporterProtocol):
         )
 
     def file_name(self, file):
-        return f'cmb.{path.basename(file.name)}'
+        return 'pdf'
+
+    def file_account(self, file):
+        return self.account_name
+
+    def file_date(self, file):
+        with open(file.name, 'rb') as f:
+            eml = parser.BytesParser().parse(fp=f)
+            b = base64.b64decode(eml.get_payload()[0].get_payload())
+            d = BeautifulSoup(b, "lxml")
+
+            balance_date = d.select(
+                '#fixBand3 font[style="font-size:19px;line-height:120%;"]'
+            )[0].text.strip().split(" ")[0]
+
+            return dateparse(balance_date).date()
 
     def extract(self, file, existing_entries=None):
         entries = []
         index = 0
+
+        last_balance_date = get_last_balance_date(self.beancount_file, self.account_name)
 
         with open(file.name, 'rb') as f:
             eml = parser.BytesParser().parse(fp=f)
