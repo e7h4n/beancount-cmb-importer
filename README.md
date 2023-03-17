@@ -1,10 +1,10 @@
 # Beancount CMB Importer
 
-[![Build and Publish - action](https://github.com/e7h4n/beancount-cmb-impoter/actions/workflows/build.yml/badge.svg)](https://github.com/e7h4n/beancount-cmb-impoter/actions/workflows/build.yml)
-[![Lint - action](https://github.com/e7h4n/beancount-cmb-impoter/actions/workflows/lint.yaml/badge.svg)](https://github.com/e7h4n/beancount-cmb-impoter/actions/workflows/lint.yaml)
-[![Coverage Status](https://coveralls.io/repos/github/e7h4n/beancount-cmb-impoter/badge.svg?branch=master)](https://coveralls.io/github/e7h4n/beancount-cmb-impoter?branch=master)
-[![Code scanning - action](https://github.com/e7h4n/beancount-cmb-impoter/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/e7h4n/beancount-cmb-impoter/actions/workflows/codeql-analysis.yml)
-[![PyPI version](https://badge.fury.io/py/beancount-cmb-impoter.svg)](https://badge.fury.io/py/beancount-cmb-impoter)
+[![Build and Publish - action](https://github.com/e7h4n/beancount-cmb-importer/actions/workflows/build.yml/badge.svg)](https://github.com/e7h4n/beancount-cmb-importer/actions/workflows/build.yml)
+[![Lint - action](https://github.com/e7h4n/beancount-cmb-importer/actions/workflows/lint.yaml/badge.svg)](https://github.com/e7h4n/beancount-cmb-importer/actions/workflows/lint.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/e7h4n/beancount-cmb-importer/badge.svg?branch=master)](https://coveralls.io/github/e7h4n/beancount-cmb-importer?branch=master)
+[![Code scanning - action](https://github.com/e7h4n/beancount-cmb-importer/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/e7h4n/beancount-cmb-importer/actions/workflows/codeql-analysis.yml)
+[![PyPI version](https://badge.fury.io/py/beancount-cmb-importer.svg)](https://badge.fury.io/py/beancount-cmb-importer)
 
 Beancount CMB Importer 是一个用于将招商银行 PDF 交易流水导入 Beancount 的 Python 库。
 
