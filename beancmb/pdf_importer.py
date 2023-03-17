@@ -100,9 +100,10 @@ def extract_transactions(pdf_file: str):
 class CmbPdfImporter(importer.ImporterProtocol):
     '''招行 pdf 交易流水导入'''
 
-    def __init__(self, account_name, main_file_path):
+    def __init__(self, account_name, main_file_path, outcoming_account_name="Equity:UFO"):
         self.account_name = account_name
         self.main_file_path = main_file_path
+        self.outcoming_account_name = outcoming_account_name
 
     def identify(self, file):
         return is_valid_filename(os.path.basename(file.name))
@@ -146,7 +147,7 @@ class CmbPdfImporter(importer.ImporterProtocol):
 
             prev_balance = transaction['balance']
             amount = transaction['amount']
-            account2 = "Equity:UFO"
+            account2 = self.outcoming_account_name
 
             rounded_amount = D(amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 

@@ -125,5 +125,24 @@ class CmbPdfImporterTestAfterLastBalance(unittest.TestCase):
         self.assertEqual(count, 8, "There should be exactly 8 entries for the specific date.")
 
 
+class CmbPdfImporterCustomAccountTest(unittest.TestCase):
+    '''PDF 导入测试，验证去向账户的自定义行为'''
+
+    def setUp(self):
+        self.account_name = "Assets:Bank:Checking"
+        self.outcoming_account_name = "Equity:UnknownAccount"
+        self.main_file_path = "tests/main.bean"
+        self.importer = CmbPdfImporter(self.account_name, self.main_file_path,
+                                       self.outcoming_account_name)
+
+    def test_custom_outcoming_account(self):
+        with open("tests/法人流水-20200330110203.pdf", "rb") as file:
+            imported_entries = self.importer.extract(file)
+            for entry in imported_entries:
+                if isinstance(entry, data.Transaction):
+                    second_posting = entry.postings[1]
+                    self.assertEqual(second_posting.account, self.outcoming_account_name)
+
+
 if __name__ == '__main__':
     unittest.main()
