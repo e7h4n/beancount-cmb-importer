@@ -101,3 +101,4 @@ ENV/
 
 bin/
 .vscode/
+.coverage
