@@ -64,7 +64,6 @@ class CmbDailyEmailImporter(importer.ImporterProtocol):
             for band in bands:
                 fonts = band.select(
                     'table tbody tr td table tbody tr td table tbody tr td table tbody tr td font')
-                time = fonts[0].text.strip()
                 currency = fonts[1].text.strip().split(" ")[0]
                 amount = D(fonts[1].text.strip().split(
                     " ")[1].replace(",", ""))
