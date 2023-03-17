@@ -10,6 +10,11 @@ Beancount CMB Importer 是一个用于将招商银行 PDF 交易流水导入 Bea
 pip install beancount-cmb-importer
 ```
 
+## 注意事项
+
+* 导入的交易，会默认添加一个去向账户 `Equity:UFO`，目前还不支持自定义这个去向账户
+* 在导入时，会识别主账本中对应账户的最后一次 balance 记录的日期，只有晚于这个日期的交易才会被导入
+
 ## 使用方法
 
 1. 登陆招商银行手机银行 App，把交易流水发送到您的邮箱中。然后下载邮箱中的附件，并把附件解压之后的 pdf 放在 documents 目录下。
