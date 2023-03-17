@@ -1,0 +1,8 @@
+1970-01-01 open Assets:Bank:Checking
+1970-01-01 open Equity:Opening-Balance
+
+2020-03-27 *
+    Assets:Bank:Checking 105,645.39 CNY
+    Equity:Opening-Balance
+
+2020-03-28 balance Assets:Bank:Checking 105,645.39 CNY

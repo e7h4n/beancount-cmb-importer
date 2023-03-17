@@ -49,13 +49,12 @@ setup(
 
     keywords='beancount, importer',
 
-    package_dir={'beancount-cmb-importer': 'src'},
-
     python_requires='>=3.6, <4',
 
-    packages=find_packages(exclude=['experiments*']),
+    packages=find_packages(),
 
     install_requires=[
+        'pdfplumber==0.8.0',
         'beancount==2.3.4',
     ],
 
@@ -69,13 +68,12 @@ setup(
             'flake8',
             'mypy',
             'pytest',
-            'python-coveralls',
-            'beautifulsoup4'
+            'python-coveralls'
         ],
     },
 
-project_urls={
-    'Bug Reports': 'https://github.com/e7h4n/beancount-cmb-importer/issues',
-    'Source': 'https://github.com/e7h4n/beancount-cmb-importer/',
-},
+    project_urls={
+        'Bug Reports': 'https://github.com/e7h4n/beancount-cmb-importer/issues',
+        'Source': 'https://github.com/e7h4n/beancount-cmb-importer/',
+    },
 )
