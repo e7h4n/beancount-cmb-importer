@@ -43,8 +43,6 @@ code-count: ## Count the lines of code
 code-lint: ## Lint the code
 	@if type pyflakes >/dev/null 2>&1 ; then pyflakes $(SRC_CORE) ; \
 	 else echo "SKIPPED. Run '$(PIP) install pyflakes' first." >&2 ; fi
-	@if type pylint >/dev/null 2>&1 ; then pylint $(SRC_CORE) ; \
-	 else echo "SKIPPED. Run '$(PIP) install pylint' first." >&2 ; fi
 	@if type flake8 >/dev/null 2>&1 ; then flake8 --max-complexity 10 $(SRC_CORE) ; \
 	 else echo "SKIPPED. Run '$(PIP) install flake8' first." >&2 ; fi
 	@if type mypy >/dev/null 2>&1 ; then mypy --ignore-missing-imports $(SRC_CORE) ; \

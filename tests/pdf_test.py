@@ -1,12 +1,15 @@
+'''PDF 导入测试'''
+
 import unittest
-from beancmb.pdf_importer import CmbPdfImporter
+from datetime import datetime
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.core import data
-from datetime import datetime
+from beancmb.pdf_importer import CmbPdfImporter
 
 
 class CmbPdfImporterTest(unittest.TestCase):
+    '''PDF 导入测试'''
 
     def setUp(self):
         self.account_name = "Assets:Bank:Checking"
@@ -14,14 +17,15 @@ class CmbPdfImporterTest(unittest.TestCase):
         self.importer = CmbPdfImporter(self.account_name, self.main_file_path)
 
     def test_extract(self):
-        # Test extracting transactions from a sample PDF file
+        '''Test extracting transactions from a sample PDF file'''
+
         with open("tests/法人流水-20200330110203.pdf", "rb") as pdf_file:
             entries = self.importer.extract(pdf_file)
 
         self.assertEqual(len(entries), 1685)
 
     def test_specific_transaction(self):
-        # Test extracting transactions from a sample PDF file
+        '''Test extracting transactions from a sample PDF file'''
         with open("tests/法人流水-20200330110203.pdf", "rb") as pdf_file:
             entries = self.importer.extract(pdf_file)
 
@@ -47,6 +51,8 @@ class CmbPdfImporterTest(unittest.TestCase):
             self.fail("The target index is out of range or not a Transaction entry.")
 
     def test_balance_entry(self):
+        '''测试 Balance 语句'''
+
         with open("tests/法人流水-20200330110203.pdf", "rb") as pdf_file:
             entries = self.importer.extract(pdf_file)
 
@@ -65,6 +71,7 @@ class CmbPdfImporterTest(unittest.TestCase):
 
 
 class CmbPdfImporterTestAfterLastBalance(unittest.TestCase):
+    '''测试导入的日期是否晚于最后一条 balance'''
 
     def setUp(self):
         self.account_name = "Assets:Bank:Checking"
@@ -72,6 +79,8 @@ class CmbPdfImporterTestAfterLastBalance(unittest.TestCase):
         self.importer = CmbPdfImporter(self.account_name, self.main_file_path)
 
     def test_extract_transactions_after_last_balance(self):
+        '''日期应该都晚于最后的 balance'''
+
         with open("tests/法人流水-20200330110203.pdf", "rb") as pdf_file:
             entries = self.importer.extract(pdf_file)
 
@@ -82,6 +91,8 @@ class CmbPdfImporterTestAfterLastBalance(unittest.TestCase):
                 self.assertGreaterEqual(entry.date, last_balance_date, "Transaction or balance date is before the last balance date in main.bean")
 
     def test_specific_balance_entry(self):
+        '''最后应该插入一条 balance'''
+
         with open("tests/法人流水-20200330110203.pdf", "rb") as pdf_file:
             entries = self.importer.extract(pdf_file)
 
@@ -98,6 +109,8 @@ class CmbPdfImporterTestAfterLastBalance(unittest.TestCase):
         self.assertEqual(balance_count, 1, "There should be exactly one balance entry for the specific date.")
 
     def test_entries_count_on_specific_date(self):
+        '''验证导入的交易记录数量'''
+
         with open("tests/法人流水-20200330110203.pdf", "rb") as pdf_file:
             entries = self.importer.extract(pdf_file)
 

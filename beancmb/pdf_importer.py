@@ -68,9 +68,6 @@ def process_text_list(text_list):
                 else:
                     break
 
-                merchant_parts.append(text_list[i])
-                i += 1
-
             merchant = " ".join(merchant_parts)
 
             transaction_dict = {
