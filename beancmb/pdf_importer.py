@@ -1,21 +1,25 @@
-from beancount.core import data
+'''招行 PDF 导入'''
+
+from datetime import datetime, timedelta
+from decimal import Decimal, ROUND_HALF_UP
+import re
+import os
+from beancount.core.data import Balance, Transaction, new_metadata, Posting, EMPTY_SET
 from beancount.core.amount import Amount
 from beancount.core.number import D
 from beancount.ingest import importer
-from datetime import datetime, timedelta
 from beancount.loader import load_file
-from decimal import Decimal, ROUND_HALF_UP
-import os
 import pdfplumber
-import re
 
 
 def get_last_balance_date(main_file_path, account_name):
+    '''获取文档中对应账户最后一次对账的时间'''
+
     entries, _, _ = load_file(main_file_path)
     last_balance_date = None
 
     for entry in reversed(entries):
-        if isinstance(entry, data.Balance) and entry.account == account_name:
+        if isinstance(entry, Balance) and entry.account == account_name:
             last_balance_date = entry.date
             break
 
@@ -23,11 +27,15 @@ def get_last_balance_date(main_file_path, account_name):
 
 
 def is_valid_filename(filename: str) -> bool:
+    '''判断文件名是否有效'''
+
     pattern = re.compile(r'^招商银行交易流水.*\.pdf$')
     return bool(pattern.match(filename))
 
 
 def process_text_list(text_list):
+    '''从文本列表中尝试解析交易记录'''
+
     result = []
     i = 0
     date_pattern = re.compile(r'\d{4}-\d{2}-\d{2}')
@@ -50,7 +58,16 @@ def process_text_list(text_list):
             merchant_parts = []
             i += 5
 
-            while i < len(text_list) and not date_pattern.match(text_list[i]) and not "交易流水验真" in text_list[i]:
+            while i < len(text_list):
+                no_date_match = not date_pattern.match(text_list[i])
+                not_verification = "交易流水验真" not in text_list[i]
+
+                if no_date_match and not_verification:
+                    merchant_parts.append(text_list[i])
+                    i += 1
+                else:
+                    break
+
                 merchant_parts.append(text_list[i])
                 i += 1
 
@@ -72,6 +89,8 @@ def process_text_list(text_list):
 
 
 def extract_transactions(pdf_file: str):
+    '''从 pdf 文件中解析交易记录'''
+
     rows = []
     with pdfplumber.open(pdf_file) as pdf:
         for page in pdf.pages:
@@ -82,6 +101,7 @@ def extract_transactions(pdf_file: str):
 
 
 class CmbPdfImporter(importer.ImporterProtocol):
+    '''招行 pdf 交易流水导入'''
 
     def __init__(self, account_name, main_file_path):
         self.account_name = account_name
@@ -90,7 +110,7 @@ class CmbPdfImporter(importer.ImporterProtocol):
     def identify(self, file):
         return is_valid_filename(os.path.basename(file.name))
 
-    def extract(self, file):
+    def extract(self, file, existing_entries=None):
         # 解析 PDF，提取交易数据并生成 Beancount 实体
         entries = []
         transactions = extract_transactions(file.name)
@@ -100,8 +120,9 @@ class CmbPdfImporter(importer.ImporterProtocol):
         # 获取 main.bean 中最后一个余额的日期
         last_balance_date = get_last_balance_date(self.main_file_path, self.account_name)
 
+        transaction = None
         for transaction in transactions:
-            meta = data.new_metadata(file.name, 0)
+            meta = new_metadata(file.name, 0)
             date = datetime.strptime(transaction['date'], '%Y-%m-%d').date()
 
             # 跳过 main.bean 中已经存在的交易
@@ -114,8 +135,9 @@ class CmbPdfImporter(importer.ImporterProtocol):
             if current_date != date:
                 current_date = date
                 if prev_balance is not None:
-                    rounded_balance = D(prev_balance).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
-                    balance_entry = data.Balance(
+                    rounded_balance = D(prev_balance).quantize(Decimal('.01'),
+                                                               rounding=ROUND_HALF_UP)
+                    balance_entry = Balance(
                         meta,
                         date,
                         self.account_name,
@@ -132,16 +154,18 @@ class CmbPdfImporter(importer.ImporterProtocol):
             rounded_amount = D(amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
             postings = [
-                data.Posting(self.account_name, Amount(rounded_amount, transaction['currency']), None, None, None, None),
-                data.Posting(account2, None, None, None, None, None)
+                Posting(self.account_name, Amount(rounded_amount, transaction['currency']),
+                        None, None, None, None),
+                Posting(account2, None, None, None, None, None)
             ]
 
-            txn = data.Transaction(meta, date, "!", payee, narration, data.EMPTY_SET, data.EMPTY_SET, postings)
+            txn = Transaction(meta, date, "!", payee, narration, EMPTY_SET,
+                              EMPTY_SET, postings)
             entries.append(txn)
 
-        if prev_balance is not None:
+        if prev_balance is not None and transaction is not None:
             rounded_balance = D(prev_balance).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
-            balance_entry = data.Balance(
+            balance_entry = Balance(
                 meta,
                 date + timedelta(days=1),
                 self.account_name,
