@@ -1,4 +1,4 @@
-SRC_CORE=beancmbpdf
+SRC_CORE=beancmb
 SRC_RESOURCES=resources
 PYTHON=python3
 PYDOC=pydoc3
@@ -16,7 +16,7 @@ help: ## Print help for each target
 
 test: ## Test the code
 	@type coverage >/dev/null 2>&1 || (echo "Run '$(PIP) install coverage' first." >&2 ; exit 1)
-	@coverage run --source . -m beancmbpdf.importer_test
+	@coverage run --source . -m beancmb.pdf_test
 	@coverage report
 
 doc: ## Document the code

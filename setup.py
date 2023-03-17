@@ -8,24 +8,24 @@ https://github.com/pypa/sampleproject
 
 import pathlib
 from setuptools import setup, find_packages
-from beancmbpdf import __version__
+from beancmb import __version__
 
 here = pathlib.Path(__file__).parent.resolve()
 
 long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
-    name='beancount-cmb-pdf-importer',
+    name='beancount-cmb-importer',
 
     version=__version__,
 
-    description='A beancount importer for CMB pdf.',
+    description='A beancount importer for CMB.',
 
     long_description=long_description,
 
     long_description_content_type='text/markdown',
 
-    url='https://github.com/e7h4n/beancount-cmb-pdf-importer',
+    url='https://github.com/e7h4n/beancount-cmb-importer',
 
     author='e7h4n',
 
@@ -49,7 +49,7 @@ setup(
 
     keywords='beancount, importer',
 
-    package_dir={'beancount-cmb-pdf-importer': 'src'},
+    package_dir={'beancount-cmb-importer': 'src'},
 
     python_requires='>=3.6, <4',
 
@@ -75,7 +75,7 @@ setup(
     },
 
 project_urls={
-    'Bug Reports': 'https://github.com/e7h4n/beancount-cmb-pdf-importer/issues',
-    'Source': 'https://github.com/e7h4n/beancount-cmb-pdf-importer/',
+    'Bug Reports': 'https://github.com/e7h4n/beancount-cmb-importer/issues',
+    'Source': 'https://github.com/e7h4n/beancount-cmb-importer/',
 },
 )
