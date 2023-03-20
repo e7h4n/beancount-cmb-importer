@@ -29,7 +29,7 @@ class CmbDailyEmailImporter(importer.ImporterProtocol):
         )
 
     def file_name(self, file):
-        return 'pdf'
+        return 'eml'
 
     def file_account(self, file):
         return self.account_name
